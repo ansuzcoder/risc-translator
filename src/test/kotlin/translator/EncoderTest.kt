@@ -106,12 +106,21 @@ class EncoderTest {
 
     @Test
     fun testEncodeImm() {
-        val inputValue = "11"
+        val inputValue = "16"
         val encodedDictI = encodeImm(InstructionTypes.I, inputValue)
         var encodedImm = ""
         for (el in encodedDictI) {
             encodedImm += el
         }
-        val expectedValue = "000000001011"
+        val expectedValueI = "000000010000"
+        assertEquals(expectedValueI, encodedImm)
+
+        val encodedDictJ = encodeImm(InstructionTypes.J, inputValue)
+        encodedImm = ""
+        for (el in encodedDictJ) {
+            encodedImm += el
+        }
+        val expectedValueJ = "00000010000000000000"
+        assertEquals(expectedValueJ, encodedImm)
     }
 }

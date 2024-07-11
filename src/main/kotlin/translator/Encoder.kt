@@ -86,43 +86,43 @@ fun encodeReg(reg: String): String {
 * Encode immediate for instructions of types
 * I, S, B, U, J
 */
-fun encodeImm(commandType: InstructionTypes, immValue: String): Map<String, String> {
+fun encodeImm(commandType: InstructionTypes, immValue: String): List<String> {
     var binaryNumber = Integer.toBinaryString(immValue.toInt()).padStart(12, '0')
     when (commandType) {
         InstructionTypes.I -> {
-            return mapOf(
-                "imm11_0" to binaryNumber
+            return listOf(
+                binaryNumber
             )
         }
         InstructionTypes.S -> {
-            return mapOf(
-                "imm11_5" to binaryNumber.substring(0, 7),
-                "imm4_0" to binaryNumber.substring(7, 12)
+            return listOf(
+                binaryNumber.substring(0, 7),
+                binaryNumber.substring(7, 12)
             )
         }
         InstructionTypes.B -> {
-            return mapOf(
-                "imm12" to "",
-                "imm10_5" to "",
-                "imm4_1" to "",
-                "imm11" to ""
+            return listOf(
+                binaryNumber[0].toString(),
+                binaryNumber.substring(2, 9),
+                binaryNumber.substring(9, 12),
+                binaryNumber[1].toString()
             )
         }
         InstructionTypes.U -> {
             binaryNumber = binaryNumber.padStart(20, '0')
-            return mapOf(
-                "imm31_12" to binaryNumber
+            return listOf(
+                binaryNumber
             )
         }
         InstructionTypes.J -> {
             binaryNumber = binaryNumber.padStart(20, '0')
-            return mapOf(
-                "imm20" to binaryNumber[0].toString(),
-                "imm10_1" to binaryNumber.substring(11, 20),
-                "imm11" to binaryNumber[10].toString(),
-                "imm19_12" to binaryNumber.substring(1, 9)
+            return listOf(
+                binaryNumber[0].toString(),
+                binaryNumber.substring(10, 20),
+                binaryNumber[9].toString(),
+                binaryNumber.substring(1, 9)
             )
         }
-        else -> return mapOf("" to "")
+        else -> return listOf("")
     }
 }
