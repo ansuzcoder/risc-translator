@@ -1,8 +1,10 @@
 package org.example
 
-import org.example.constants.funct7
+import data_converter.convertToBinary
+import data_converter.convertToHex
 
 fun main() {
-    val data = funct7["ADD"]
-    println(data)
+    val data = "16"
+    println(convertToBinary(data))
+    println(convertToHex(data))
 }
