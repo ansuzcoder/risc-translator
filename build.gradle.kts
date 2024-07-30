@@ -10,6 +10,7 @@ repositories {
 }
 
 dependencies {
+    implementation("org.openjfx:javafx-controls:20")
     testImplementation(kotlin("test"))
 }
 
