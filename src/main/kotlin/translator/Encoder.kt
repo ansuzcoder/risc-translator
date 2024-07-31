@@ -10,6 +10,7 @@ import org.example.constants.RiscVInstructionTypes.STypeInstruction
 import org.example.constants.RiscVInstructionTypes.BTypeInstruction
 import org.example.constants.RiscVInstructionTypes.UTypeInstruction
 import org.example.constants.RiscVInstructionTypes.JTypeInstruction
+import java.lang.Exception
 
 
 class Encoder {
@@ -238,4 +239,40 @@ class InstructionBuilder {
             opcode
         )
     }
+}
+
+fun encodeCodeLine(instructionComponents: Pair<String, List<String>>): String {
+    val encoder = Encoder()
+    val instructionBuilder = InstructionBuilder()
+
+    val opcode = encoder.getOpcodeBasedOnName(instructionComponents.first)
+    val commandType = RiscVOpCodes[opcode]
+
+    val encodedInstruction: String
+
+    when (commandType) {
+        InstructionTypes.R -> {
+            encodedInstruction = instructionBuilder.buildInstructionR(opcode, instructionComponents).toString()
+        }
+        InstructionTypes.I -> {
+            encodedInstruction = instructionBuilder.buildInstructionI(opcode, instructionComponents).toString()
+        }
+        InstructionTypes.S -> {
+            encodedInstruction = instructionBuilder.buildInstructionS(opcode, instructionComponents).toString()
+        }
+        InstructionTypes.B -> {
+            encodedInstruction = instructionBuilder.buildInstructionB(opcode, instructionComponents).toString()
+        }
+        InstructionTypes.U -> {
+            encodedInstruction = instructionBuilder.buildInstructionU(opcode, instructionComponents).toString()
+        }
+        InstructionTypes.J -> {
+            encodedInstruction = instructionBuilder.buildInstructionJ(opcode, instructionComponents).toString()
+        }
+        else -> {
+            throw Exception("UCmd")
+        }
+    }
+
+    return encodedInstruction
 }

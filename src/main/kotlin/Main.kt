@@ -1,5 +1,7 @@
 package org.example
 
+import org.example.translator.Encoder
+import org.example.translator.encodeCodeLine
 import java.awt.BorderLayout
 import java.awt.Dimension
 import java.awt.Font
@@ -34,12 +36,15 @@ fun main(args: Array<String>) {
         val userInput = inputTextArea.text
         val output = StringBuilder()
 
+        val encoder = Encoder()
+
         // Process each line of user input
         userInput.lines().forEach { line ->
             // Perform your processing on each line here
             // For demonstration, we'll just reverse each line
-            val processedLine = line.reversed()
-            output.append(processedLine).append("\n")
+            val lineComponents = encoder.splitIntoComponents(line)
+            val encodedLine = encodeCodeLine(lineComponents)
+            output.append(encodedLine).append("\n")
         }
 
         // Set the processed output to the output text area
