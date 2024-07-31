@@ -2,12 +2,20 @@ package org.example.translator
 
 import data_converter.convertToBinary
 import org.example.constants.*
+
 import org.example.constants.RiscVInstructionTypes.InstructionTypes
+import org.example.constants.RiscVInstructionTypes.RTypeInstruction
+import org.example.constants.RiscVInstructionTypes.ITypeInstruction
+import org.example.constants.RiscVInstructionTypes.STypeInstruction
+import org.example.constants.RiscVInstructionTypes.BTypeInstruction
+import org.example.constants.RiscVInstructionTypes.UTypeInstruction
+import org.example.constants.RiscVInstructionTypes.JTypeInstruction
+
 
 class Encoder {
     /*
-* Remove all unnecessary spaces from the code line
-*/
+    * Remove all unnecessary spaces from the code line
+    */
     fun trimLine(codeLine: String): String {
         return codeLine.replace(Regex("\\s+"), " ").trim()
     }
@@ -126,29 +134,108 @@ class Encoder {
             else -> return listOf("")
         }
     }
+}
 
-    fun encodeLine(codeLine: String): String {
-        val splitComponents = splitIntoComponents(trimLine(codeLine))
+class InstructionBuilder {
+    private val encoder = Encoder()
 
-        val opcode = getOpcodeBasedOnName(splitComponents.first)
-        var funct3 = ""
-        var funct7 = ""
-        when (RiscVOpCodes[opcode]) {
-            InstructionTypes.R -> {
-                funct3 = getFunct3(splitComponents.first)
-                funct7 = getFunct7(splitComponents.first)
-            }
-            InstructionTypes.I -> {
-                funct3 = getFunct3(splitComponents.first)
-            }
-            InstructionTypes.S -> {
-                funct3 = getFunct3(splitComponents.first)
-            }
-            InstructionTypes.B -> {
-                funct3 = getFunct3(splitComponents.first)
-            }
-            else -> { }
-        }
-        return ""
+    fun buildInstructionR(opcode: String, components: Pair<String, List<String>>): RTypeInstruction {
+        val functs = mapOf(
+            "funct3" to encoder.getFunct3(components.first),
+            "funct7" to encoder.getFunct7(components.first)
+        )
+        val regs = mapOf(
+            "rd" to encoder.encodeReg(components.second[0]),
+            "rs1" to encoder.encodeReg(components.second[1]),
+            "rs2" to encoder.encodeReg(components.second[2]),
+        )
+        return RTypeInstruction(
+            functs["funct7"]!!,
+            regs["rs2"]!!,
+            regs["rs1"]!!,
+            functs["funct3"]!!,
+            regs["rd"]!!,
+            opcode
+        )
+    }
+
+    fun buildInstructionI(opcode: String, components: Pair<String, List<String>>): ITypeInstruction {
+        val imm = encoder.encodeImm(InstructionTypes.I, components.second[2])
+        val funct3 = encoder.getFunct3(components.first)
+        val regs = mapOf(
+            "rd" to encoder.encodeReg(components.second[0]),
+            "rs1" to encoder.encodeReg(components.second[1])
+        )
+        return ITypeInstruction(
+            imm[0],
+            regs["rs1"]!!,
+            funct3,
+            regs["rd"]!!,
+            opcode
+        )
+    }
+
+    fun buildInstructionS(opcode: String, components: Pair<String, List<String>>): STypeInstruction {
+        val leftBracket = components.second[1].indexOf('(')
+        val rightBracket = components.second[1].indexOf(')')
+
+        val funct3 = encoder.getFunct3(components.first)
+        val rs2 = components.second[0]
+        val imm = components.second[1].substring(0, leftBracket)
+        val rs1 = components.second[1].substring(leftBracket + 1, rightBracket)
+
+        val encodedImm = encoder.encodeImm(InstructionTypes.S, imm)
+
+        return STypeInstruction(
+            encodedImm[0],
+            rs2,
+            rs1,
+            funct3,
+            encodedImm[1],
+            opcode
+        )
+    }
+
+    fun buildInstructionB(opcode: String, components: Pair<String, List<String>>): BTypeInstruction {
+        val rs1 = components.second[0]
+        val rs2 = components.second[1]
+        val funct3 = encoder.getFunct3(components.first)
+        val imm = encoder.encodeImm(InstructionTypes.B, components.second[2])
+
+        return BTypeInstruction(
+            imm[0],
+            imm[1],
+            rs2,
+            rs1,
+            funct3,
+            imm[2],
+            imm[3],
+            opcode
+        )
+    }
+
+    fun buildInstructionU(opcode: String, components: Pair<String, List<String>>): UTypeInstruction {
+        val rd = components.second[0]
+        val imm = encoder.encodeImm(InstructionTypes.U, components.second[1])
+
+        return UTypeInstruction(
+            imm[0],
+            rd,
+            opcode
+        )
+    }
+
+    fun buildInstructionJ(opcode: String, components: Pair<String, List<String>>): JTypeInstruction {
+        val rd = components.second[0]
+        val imm = encoder.encodeImm(InstructionTypes.J, components.second[1])
+
+        return JTypeInstruction(
+            imm[0],
+            imm[1],
+            imm[2],
+            imm[3],
+            rd,
+            opcode
+        )
     }
 }
