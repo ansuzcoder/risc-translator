@@ -6,7 +6,7 @@ class Decoder {
     /*
     * Retrieve opcode for instructions
     */
-    private fun retrieveOpcode(instruction: String): String {
+    fun retrieveOpcode(instruction: String): String {
         return instruction.substring(25)
     }
 
@@ -156,5 +156,14 @@ class Decoder {
             null -> throw Exception("UCmd")
         }
         return instructionName
+    }
+}
+
+data class DecodedInstruction(
+    val instructionName: String,
+    val operands: Map<String, String>
+) {
+    override fun toString(): String {
+        return "{Name: [$instructionName], Operands: [$operands]"
     }
 }
