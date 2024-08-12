@@ -2,6 +2,8 @@ package org.example
 
 import org.example.memory.Memory
 import org.example.memory.Registers
+import org.example.translator.DecodedInstruction
+import org.example.translator.Decoder
 import org.example.translator.Encoder
 import org.example.translator.encodeCodeLine
 import java.awt.BorderLayout
@@ -19,72 +21,67 @@ fun main(args: Array<String>) {
     val registers = Registers()
     var currentAddressPointer = 0
 
-    // Create the text areas
     val inputTextArea = JTextArea()
     val outputTextArea = JTextArea()
 
-    // Set a larger font for the text areas
     val font = Font("Arial", Font.PLAIN, 40)
     inputTextArea.font = font
     outputTextArea.font = font
 
-    // Make the output text area non-editable
     outputTextArea.isEditable = false
 
-    // Create the scroll panes for the text areas
     val inputScrollPane = JScrollPane(inputTextArea)
     val outputScrollPane = JScrollPane(outputTextArea)
 
-    // Create the button
     val button = JButton("Run")
 
-    // Add an action listener to the button
     button.addActionListener {
         val userInput = inputTextArea.text
         val output = StringBuilder()
 
         val encoder = Encoder()
+        val decoder = Decoder()
 
-        // Process each line of user input
         userInput.lines().forEach { line ->
-            // Perform your processing on each line here
-            val lineComponents = encoder.splitIntoComponents(line)
-            val encodedLine = encodeCodeLine(lineComponents)
-            output.append(encodedLine).append("\n")
 
-            memory.write(currentAddressPointer++, encodedLine.toUInt(2))
+            if (line.all { char -> char.isDigit() }) {
+                val opcode = decoder.retrieveOpcode(line)
+                val functs = decoder.retrieveFuncts(line)
+                val operands = decoder.retrieveOperands(line)
+                val instructionName = decoder.retrieveInstructionName(opcode, functs)
+
+                val decoderInstruction = DecodedInstruction(instructionName, operands)
+
+                output.append(decoderInstruction.toString()).append("\n")
+            } else {
+                val lineComponents = encoder.splitIntoComponents(line)
+                val encodedLine = encodeCodeLine(lineComponents)
+                output.append(encodedLine).append("\n")
+
+                memory.write(currentAddressPointer++, encodedLine.toUInt(2))
+            }
+
         }
 
-//        for (i in 0..currentAddressPointer) {
-//            println(memory.fetch(i))
-//        }
-
-        // Set the processed output to the output text area
         outputTextArea.text = output.toString()
     }
 
-    // Create a panel to hold the button
     val buttonPanel = JPanel()
     buttonPanel.add(button)
 
-    // Create a split pane
     val splitPane = JSplitPane(JSplitPane.VERTICAL_SPLIT, inputScrollPane, outputScrollPane)
-    splitPane.resizeWeight = 0.5 // Ensure equal resize weight
+    splitPane.resizeWeight = 0.5
 
-    // Create the frame
     val frame = JFrame("RISC-V translator for Riscambler IDE")
     frame.layout = BorderLayout()
     frame.defaultCloseOperation = JFrame.EXIT_ON_CLOSE
     frame.size = Dimension(500, 500)
     frame.setLocationRelativeTo(null)
 
-    // Add components to the frame
     frame.add(splitPane, BorderLayout.CENTER)
     frame.add(buttonPanel, BorderLayout.NORTH)
 
-    // Make the frame visible
     frame.isVisible = true
 
-    // Set divider location after the frame is visible
     splitPane.setDividerLocation(0.5)
 }

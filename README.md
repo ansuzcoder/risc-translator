@@ -10,7 +10,19 @@ The `Encoder` provides *opcodes*, *functs3/7*, *registers* and *immediate values
 
 The `Decoder` works vice versa. It takes a **uint32** number from memory to get the instruction and its operands. The result depends on the opcode, which is extracted in the very beginning of the decoding process.
 
+# Usage
+The current version of the translator decides whether to use `Encoder` or `Decoder`
+by itself. With that in mind, to use the translator we can simply write code like:
+```
+ADD x1, x2, x3 // Encoder will be used
+```
+or
+```
+00000000001100010000000010110011 // Decoder will be used
+```
+
 # TODO
-- Integrate `Encoder` into the application
-- Finish `Decoder`
+- Integrate `Encoder` into the application [✔️]
+- Finish `Decoder` [✔️]
 - Finish GUI for the convenient usage
+- Test all `Encoder` and `Decoder` on every command present in RISC-V ISA

@@ -164,6 +164,6 @@ data class DecodedInstruction(
     val operands: Map<String, String>
 ) {
     override fun toString(): String {
-        return "{Name: [$instructionName], Operands: [$operands]"
+        return "{Name: [$instructionName], Operands: [$operands]}"
     }
 }
