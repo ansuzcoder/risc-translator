@@ -1,4 +1,4 @@
-package translator
+package translator.encoder
 
 import org.example.constants.RiscVInstructionTypes.InstructionTypes
 import org.example.translator.*

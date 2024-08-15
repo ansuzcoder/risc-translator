@@ -22,7 +22,10 @@ or
 ```
 
 # TODO
-- Integrate `Encoder` into the application [✔️]
-- Finish `Decoder` [✔️]
 - Finish GUI for the convenient usage
 - Test all `Encoder` and `Decoder` on every command present in RISC-V ISA
+- Fix `load/store instructions` encoding
+
+# Finished tasks
+- Integrate `Encoder` into the application [✔️]
+- Finish `Decoder` [✔️]
