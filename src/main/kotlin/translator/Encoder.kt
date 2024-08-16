@@ -112,8 +112,8 @@ class Encoder {
             InstructionTypes.B -> {
                 return listOf(
                     binaryNumber[0].toString(),
-                    binaryNumber.substring(2, 9),
-                    binaryNumber.substring(9, 12),
+                    binaryNumber.substring(2, 7),
+                    binaryNumber.substring(7, 12),
                     binaryNumber[1].toString()
                 )
             }
@@ -181,9 +181,9 @@ class InstructionBuilder {
         val rightBracket = components.second[1].indexOf(')')
 
         val funct3 = encoder.getFunct3(components.first)
-        val rs2 = components.second[0]
+        val rs2 = encoder.encodeReg(components.second[0])
         val imm = components.second[1].substring(0, leftBracket)
-        val rs1 = components.second[1].substring(leftBracket + 1, rightBracket)
+        val rs1 = encoder.encodeReg(components.second[1].substring(leftBracket + 1, rightBracket))
 
         val encodedImm = encoder.encodeImm(InstructionTypes.S, imm)
 
@@ -198,8 +198,8 @@ class InstructionBuilder {
     }
 
     fun buildInstructionB(opcode: String, components: Pair<String, List<String>>): BTypeInstruction {
-        val rs1 = components.second[0]
-        val rs2 = components.second[1]
+        val rs1 = encoder.encodeReg(components.second[0])
+        val rs2 = encoder.encodeReg(components.second[1])
         val funct3 = encoder.getFunct3(components.first)
         val imm = encoder.encodeImm(InstructionTypes.B, components.second[2])
 
@@ -216,7 +216,7 @@ class InstructionBuilder {
     }
 
     fun buildInstructionU(opcode: String, components: Pair<String, List<String>>): UTypeInstruction {
-        val rd = components.second[0]
+        val rd = encoder.encodeReg(components.second[0])
         val imm = encoder.encodeImm(InstructionTypes.U, components.second[1])
 
         return UTypeInstruction(
@@ -227,7 +227,7 @@ class InstructionBuilder {
     }
 
     fun buildInstructionJ(opcode: String, components: Pair<String, List<String>>): JTypeInstruction {
-        val rd = components.second[0]
+        val rd = encoder.encodeReg(components.second[0])
         val imm = encoder.encodeImm(InstructionTypes.J, components.second[1])
 
         return JTypeInstruction(

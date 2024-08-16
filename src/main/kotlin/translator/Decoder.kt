@@ -110,7 +110,7 @@ class Decoder {
     fun retrieveInstructionName(opcode: String, functs: Map<String, String>): String {
         val instructionType = RiscVOpCodes[opcode]
 
-        val instructionName: String
+        var instructionName: String = ""
 
         val funct3 = functs["funct3"]
         val funct7 = functs["funct7"]
@@ -119,41 +119,48 @@ class Decoder {
 
         when (instructionType) {
             RiscVInstructionTypes.InstructionTypes.R -> {
-                instructionName = InstructionsR[soughtCode] ?: throw Exception("UCmd")
+                instructionName = InstructionsR[soughtCode] ?: throw Exception("UCmd $soughtCode")
             }
             RiscVInstructionTypes.InstructionTypes.I -> {
                 instructionName = when (opcode) {
                     "0000011" -> {
-                        InstructionsLoadI[soughtCode] ?: throw Exception("UCmd")
+                        InstructionsLoadI[soughtCode] ?: throw Exception("UCmd $soughtCode")
                     }
 
                     "0010011" -> {
-                        InstructionsArithmeticI[soughtCode] ?: throw Exception("UCmd")
+                        InstructionsArithmeticI[soughtCode] ?: throw Exception("UCmd $soughtCode")
                     }
 
                     "1100111" -> {
-                        InstructionsJalrI[soughtCode] ?: throw Exception("UCmd")
+                        InstructionsJalrI[soughtCode] ?: throw Exception("UCmd $soughtCode")
                     }
 
                     else -> {
-                        throw Exception("UCmd")
+                        throw Exception("UCmd with $opcode")
                     }
 
                 }
             }
             RiscVInstructionTypes.InstructionTypes.S -> {
-                instructionName = InstructionsS[soughtCode] ?: throw Exception("UCmd")
+                instructionName = InstructionsS[soughtCode] ?: throw Exception("UCmd with $soughtCode")
             }
             RiscVInstructionTypes.InstructionTypes.B -> {
-                instructionName = InstructionsB[soughtCode] ?: throw Exception("UCmd")
+                instructionName = InstructionsB[soughtCode] ?: throw Exception("UCmd with $soughtCode")
             }
             RiscVInstructionTypes.InstructionTypes.U -> {
-                TODO()
+                when (opcode) {
+                    "0010111" -> {
+                        instructionName = "AUIPC"
+                    }
+                    "0110111" -> {
+                        instructionName = "LUI"
+                    }
+                }
             }
             RiscVInstructionTypes.InstructionTypes.J -> {
-                TODO()
+                instructionName = "JAL"
             }
-            null -> throw Exception("UCmd")
+            null -> throw Exception("UCmd for $opcode")
         }
         return instructionName
     }
