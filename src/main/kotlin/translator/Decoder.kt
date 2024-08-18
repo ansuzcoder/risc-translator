@@ -93,13 +93,14 @@ class Decoder {
                 operands["rd"] = instruction.substring(20, 25)
             }
             RiscVInstructionTypes.InstructionTypes.J -> {
-                val imm1 = instruction[0].toString()
-                val imm2 = instruction.substring(1, 6)
-                val imm3 = instruction.substring(19, 24)
-                val imm4 = instruction[24].toString()
+                val imm20 = instruction[0].toString()
+                val imm10_1 = instruction.substring(1, 11)
+                val imm11 = instruction[11].toString()
+                val imm19_12 = instruction.substring(12, 20)
 
-                operands["imm"] = imm1 + imm4 + imm3 + imm2
-                operands["rd"] = instruction.substring(11, 16)
+                // shitty shift right (>> 1)
+                operands["imm"] = (imm20 + imm19_12 + imm11 + imm10_1).substring(1) + "0"
+                operands["rd"] = instruction.substring(20, 25)
             }
             null -> throw Exception("UCmd")
         }
