@@ -112,8 +112,8 @@ class Encoder {
             InstructionTypes.B -> {
                 return listOf(
                     binaryNumber[0].toString(),
-                    binaryNumber.substring(2, 7),
-                    binaryNumber.substring(7, 12),
+                    binaryNumber.substring(2, 8),
+                    binaryNumber.substring(8, 12),
                     binaryNumber[1].toString()
                 )
             }
@@ -124,7 +124,8 @@ class Encoder {
                 )
             }
             InstructionTypes.J -> {
-                binaryNumber = binaryNumber.padStart(20, '0')
+                binaryNumber = (binaryNumber.padStart(21, '0'))
+                binaryNumber = binaryNumber.substring(0, 21)
                 return listOf(
                     binaryNumber[0].toString(),
                     binaryNumber.substring(10, 20),
